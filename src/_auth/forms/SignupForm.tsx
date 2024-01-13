@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 import { Button } from "@/components/ui/button"
@@ -10,14 +10,24 @@ import { useForm } from "react-hook-form";
 import { SignupValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
 import { useToast } from "@/components/ui/use-toast";
-import { useCreateUserAccount } from "@/lib/react-query/queryAndMutations";
+import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queryAndMutations";
+import { useUserContext } from "@/context/AuthContext";
 
 
 const SignupForm = () => {
+  const navigate = useNavigate();
   const {toast} = useToast();
+  const {checkAuthUser,isLoading: isUserLoading } = useUserContext();
 
+  const { 
+    mutateAsync : createUserAccount , 
+    isPending :isCreatingAccount ,
+  } = useCreateUserAccount();
 
-  //const { mutateAsync : createUserAccount , isLoading :isCreatingAccount } = useCreateUserAccount();
+  const { 
+    mutateAsync: signInAccount, 
+    isPending: isSigningIn ,
+  } = useSignInAccount();
 
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
@@ -38,9 +48,23 @@ const SignupForm = () => {
       });
     }
 
-    //const session = await signInAccount();
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    });
 
+    if(!session){
+      return toast({title: 'Sign in failed. Please try again.'})
+    }
 
+    const isLoggedIn = await checkAuthUser();
+
+    if(isLoggedIn){
+      form.reset();
+      navigate('/');
+    }else{
+      return toast({ title: 'Sign up failed. Please try again.'})
+    }
   }
 
   return (
@@ -107,7 +131,7 @@ const SignupForm = () => {
               )}
             />
           <Button type="submit" className="shad-button_primary">
-            {true ? (
+            {isCreatingAccount ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>
@@ -124,4 +148,4 @@ const SignupForm = () => {
   )
 }
 
-export default SignupForm
+export default SignupForm;
