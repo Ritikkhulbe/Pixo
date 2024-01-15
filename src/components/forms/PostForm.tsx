@@ -134,7 +134,12 @@ const PostForm = ({ post, action }: PostFormProps) => {
         />
 
         <div className="flex gap-4 items-center justify-end">
-          <Button type="button" className="shad-button_dark_4 h-11">Cancel</Button>
+          <Button type="button" className="shad-button_dark_4 h-11" onClick={() => {
+            navigate('/');
+            if(action === 'Create')
+              return toast({title: "Post discarded"});
+            return toast({title: "Cancelled Post Update"});
+          }}>Cancel</Button>
           <Button type="submit" className="shad-button_primary whitespace-nowrap  h-11"
           disabled={isLoadingCreate || isLoadingUpdate}>{isLoadingCreate || isLoadingUpdate ? <Loader /> : `${action} Post`}</Button>
         </div>

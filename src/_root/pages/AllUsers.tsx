@@ -2,9 +2,11 @@ import { useToast } from "@/components/ui/use-toast";
 import { useGetUsers } from "@/lib/react-query/queryAndMutations";
 import Loader from "@/components/shared/Loader";
 import UserCard from "@/components/shared/UserCard";
+import { useUserContext } from "@/context/AuthContext";
 
 const AllUsers = () => {
   const { toast } = useToast();
+  const { user } = useUserContext()
 
   const { data: creators, isLoading, isError: isErrorCreators } = useGetUsers();
 
@@ -22,11 +24,17 @@ const AllUsers = () => {
           <Loader />
         ) : (
           <ul className="user-grid">
-            {creators?.documents.map((creator) => (
+            {creators?.documents.map((creator) => 
+            creator.$id !== user.id && (
               <li key={creator?.$id} className="flex-1 min-w-[200px] w-full  ">
                 <UserCard user={creator} />
               </li>
-            ))}
+            ),
+            creators?.documents.length <= 1 ? (
+              <p>
+                No users found
+              </p>
+            ):(<></>))}
           </ul>
         )}
       </div>
