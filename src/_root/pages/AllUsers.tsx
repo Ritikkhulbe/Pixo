@@ -24,12 +24,17 @@ const AllUsers = () => {
           <Loader />
         ) : (
           <ul className="user-grid">
-            {creators?.documents.map((creator) => 
-            creator.$id !== user.id && (
-              <li key={creator?.$id} className="flex-1 min-w-[200px] w-full  ">
-                <UserCard user={creator} />
-              </li>
-            ))}
+            {creators?.documents.length === 0 ? (
+              <p>No users found</p>
+            ) : (
+              creators?.documents.map((creator) => (
+                creator?.$id !== user.id && (
+                  <li key={creator?.$id} className="flex-1 min-w-[200px] w-full">
+                    <UserCard user={creator} />
+                  </li>
+      )
+    ))
+  )}
           </ul>
         )}
       </div>
