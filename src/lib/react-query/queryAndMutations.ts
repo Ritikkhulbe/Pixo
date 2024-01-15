@@ -3,7 +3,6 @@ import {
   useMutation,
   useQueryClient,
   useInfiniteQuery,
-  InfiniteData,
 } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
@@ -58,7 +57,7 @@ export const useSignOutAccount = () => {
 
 export const useGetPosts = () => {
   
-  return useInfiniteQuery<InfiniteData<unknown, unknown>, Error, InfiniteData<unknown, unknown>, QUERY_KEYS.GET_INFINITE_POSTS[]>({
+  return useInfiniteQuery({
     queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
     queryFn: getInfinitePosts as any,
     getNextPageParam: (lastPage: any ) => {
