@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
   useInfiniteQuery,
+  InfiniteData,
 } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
@@ -56,17 +57,21 @@ export const useSignOutAccount = () => {
 // ============================================================
 
 export const useGetPosts = () => {
-  return useInfiniteQuery({
+  
+  return useInfiniteQuery<InfiniteData<unknown, unknown>, Error, InfiniteData<unknown, unknown>, QUERY_KEYS.GET_INFINITE_POSTS[]>({
     queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
-    queryFn: getInfinitePosts,
-    getNextPageParam: (lastPage) => {
+    queryFn: getInfinitePosts as any,
+    getNextPageParam: (lastPage: any ) => {
       // If there's no data, there are no more pages.
-      if(lastPage && lastPage.documents.length === 0) return null;
+      if (lastPage && lastPage.documents.length === 0) {
+        return null;
+      }
 
-      const lastId = lastPage?.documents[lastPage?.documents.length - 1].$id;
-
+      // Use the $id of the last document as the cursor.
+      const lastId = lastPage.documents[lastPage.documents.length - 1].$id;
       return lastId;
     },
+    initialPageParam: 0,
   });
 };
 
