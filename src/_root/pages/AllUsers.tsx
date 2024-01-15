@@ -29,12 +29,7 @@ const AllUsers = () => {
               <li key={creator?.$id} className="flex-1 min-w-[200px] w-full  ">
                 <UserCard user={creator} />
               </li>
-            ),
-            creators?.documents.length <= 1 ? (
-              <p>
-                No users found
-              </p>
-            ):(<></>))}
+            ))}
           </ul>
         )}
       </div>
